@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APK Builder - HTML to APK (FULL DECODE)</title>
+  <meta name="i18n-title" content="title.index">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --bg-primary: #f5f5f0;
+      --bg-secondary: #eceee8;
+      --bg-card: #ffffff;
+      --bg-card-hover: #fafaf7;
+      --bg-input: #f0f1ec;
+      --bg-input-focus: #ffffff;
+      --text-primary: #1a1c18;
+      --text-secondary: #44483e;
+      --text-tertiary: #74796d;
+      --text-placeholder: #9ca393;
+      --accent: #4a6741;
+      --accent-light: #c2d4b8;
+      --accent-surface: #e8f0e2;
+      --accent-hover: #3d5636;
+      --border-color: #d5d8ce;
+      --border-focus: #4a6741;
+      --shadow-sm: 0 1px 3px rgba(26, 28, 24, 0.06);
+      --shadow-md: 0 4px 12px rgba(26, 28, 24, 0.08);
+      --shadow-lg: 0 8px 30px rgba(26, 28, 24, 0.12);
+      --shadow-xl: 0 16px 48px rgba(26, 28, 24, 0.16);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --danger: #b3261e;
+      --danger-surface: #fce8e6;
+      --warning: #e8a317;
+      --warning-surface: #fef3dd;
+      --success: #2e7d32;
+      --success-surface: #e6f4ea;
+      --info: #1565c0;
+      --info-surface: #e3f2fd;
+      --transition-fast: 150ms cubic-bezier(0.2, 0, 0, 1);
+      --transition-med: 250ms cubic-bezier(0.2, 0, 0, 1);
+      --transition-slow: 350ms cubic-bezier(0.2, 0, 0, 1);
+      --font-body: 'Poppins', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace
+    }
+
+    html.dark {
+      --bg-primary: #111611;
+      --bg-secondary: #1b1f1a;
+      --bg-card: #222721;
+      --bg-card-hover: #2a302a;
+      --bg-input: #2a302a;
+      --bg-input-focus: #333933;
+      --text-primary: #e2e3dd;
+      --text-secondary: #c2c4bb;
+      --text-tertiary: #8c9085;
+      --text-placeholder: #6b6f65;
+      --accent: #a3c498;
+      --accent-light: #3d5636;
+      --accent-surface: #2a3826;
+      --accent-hover: #b8d4ae;
+      --border-color: #3a3f38;
+      --border-focus: #a3c498;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.35);
+      --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.4);
+      --danger: #f2b8b5;
+      --danger-surface: #3b1c1a;
+      --warning: #f0c64f;
+      --warning-surface: #3d3012;
+      --success: #81c784;
+      --success-surface: #1b3a1b;
+      --info: #90caf9;
+      --info-surface: #0d2846
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5
+    }
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh
+    }
+
+    .app-header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px)
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 900px;
+      margin: 0 auto
+    }
+
+    .app-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 18px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(74, 103, 65, 0.3)
+    }
+
+    html.dark .app-logo {
+      box-shadow: 0 2px 8px rgba(163, 196, 152, 0.2)
+    }
+
+    .header-text {
+      flex: 1;
+      min-width: 0
+    }
+
+    .header-text h1 {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.3px
+    }
+
+    .header-text p {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      text-transform: uppercase
+    }
+
+    .tab-nav {
+      display: flex;
+      gap: 2px;
+      background: var(--bg-secondary);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      margin: 16px auto 0;
+      max-width: 900px;
+      width: calc(100% - 40px)
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 6px;
+      border: none;
+      background: transparent;
+      color: var(--text-tertiary);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-med);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+      position: relative
+    }
+
+    .tab-btn i {
+      font-size: 14px
+    }
+
+    .tab-btn:hover {
+      color: var(--text-secondary);
+      background: var(--bg-card)
+    }
+
+    .tab-btn.active {
+      background: var(--bg-card);
+      color: var(--accent);
+      box-shadow: var(--shadow-sm)
+    }
+
+    .main-content {
+      flex: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 20px
+    }
+
+    .tab-panel {
+      display: none;
+      animation: panelIn .3s ease
+    }
+
+    .tab-panel.active {
+      display: block
+    }
+
+    @keyframes panelIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 16px;
+      transition: box-shadow var(--transition-med)
+    }
+
+    .section-card:hover {
+      box-shadow: var(--shadow-sm)
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -0.2px
+    }
+
+    .section-title i {
+      color: var(--accent);
+      font-size: 16px
+    }
+
+    .section-desc {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-bottom: 20px;
+      line-height: 1.6
+    }
+
+    .form-group {
+      margin-bottom: 18px
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      letter-spacing: 0.2px
+    }
+
+    .form-label .required {
+      color: var(--danger);
+      margin-left: 2px
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg-input);
+      border: 1.5px solid transparent;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: var(--text-primary);
+      transition: all var(--transition-fast);
+      outline: none
+    }
+
+    .form-input::placeholder {
+      color: var(--text-placeholder)
+    }
+
+    .form-input:hover {
+      border-color: var(--border-color)
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      border-color: var(--border-focus);
+      background: var(--bg-input-focus);
+      box-shadow: 0 0 0 3px var(--accent-surface)
+    }
+
+    .form-input.mono {
+      font-family: var(--font-mono);
+      font-size: 14px
+    }
+
+    .form-hint {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+      line-height: 1.5
+    }
+
+    .form-select {
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2374796d' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
+    }
+
+    .upload-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition-med);
+      position: relative;
+      overflow: hidden
+    }
+
+    .upload-zone:hover,
+    .upload-zone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-surface)
+    }
+
+    .upload-zone.has-file {
+      border-color: var(--success);
+      border-style: solid
+    }
+
+    .upload-icon {
+      font-size: 32px;
+      color: var(--accent);
+      margin-bottom: 12px
+    }
+
+    .upload-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 4px
+    }
+
+    .upload-hint {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      line-height: 1.6
+    }
+
+    .upload-file-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--success-surface);
+      border-radius: var(--radius-sm);
+      margin-top: 12px
+    }
+
+    .upload-file-info i {
+      color: var(--success);
+      font-size: 18px
+    }
+
+    .upload-file-info .file-name {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      word-break: break-all
+    }
+
+    .upload-file-info .file-size {
+      font-size: 11px;
+      color: var(--text-tertiary)
+    }
+
+    .upload-remove {
+      background: none;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      padding: 4px;
+      font-size: 14px;
+      border-radius: 50%;
+      transition: background var(--transition-fast)
+    }
+
+    .upload-remove:hover {
+      background: var(--danger-surface)
+    }
+
+    .icon-upload-zone {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      cursor: pointer;
+      transition: all var(--transition-med)
+    }
+
+    .icon-upload-zone:hover,
+    .icon-upload-zone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-surface)
+    }
+
+    .icon-upload-zone.has-icon {
+      border-color: var(--success);
+      border-style: solid
+    }
+
+    .icon-preview {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-input);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 1px solid var(--border-color)
+    }
+
+    .icon-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover
+    }
+
+    .icon-preview i {
+      font-size: 24px;
+      color: var(--text-placeholder)
+    }
+
+    .icon-text {
+      flex: 1;
+      min-width: 0
+    }
+
+    .icon-text .title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary)
+    }
+
+    .icon-text .hint {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 2px
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap
+    }
+
+    .btn:active {
+      transform: scale(0.97)
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(74, 103, 65, 0.3)
+    }
+
+    html.dark .btn-primary {
+      color: #111611;
+      box-shadow: 0 2px 8px rgba(163, 196, 152, 0.15)
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 4px 16px rgba(74, 103, 65, 0.35)
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--accent);
+      border: 1.5px solid var(--accent)
+    }
+
+    .btn-outline:hover {
+      background: var(--accent-surface)
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff
+    }
+
+    .btn-danger:hover {
+      opacity: 0.9
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 8px 14px
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-input)
+    }
+
+    .btn-full {
+      width: 100%
+    }
+
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 12px
+    }
+
+    .btn .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite
+    }
+
+    html.dark .btn-primary .spinner {
+      border: 2px solid rgba(17, 22, 17, 0.3);
+      border-top-color: #111611
+    }
+
+    .btn.loading .spinner {
+      display: block
+    }
+
+    .btn.loading .btn-text {
+      opacity: 0
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .preview-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      border: 1px solid var(--border-color);
+      border-bottom: none
+    }
+
+    .preview-url {
+      flex: 1;
+      padding: 6px 12px;
+      background: var(--bg-input);
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--text-tertiary);
+      font-family: var(--font-mono);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border: 1px solid var(--border-color)
+    }
+
+    .preview-frame-wrap {
+      border: 1px solid var(--border-color);
+      border-top: none;
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      overflow: hidden;
+      background: #fff;
+      min-height: 400px;
+      position: relative
+    }
+
+    .preview-frame {
+      width: 100%;
+      height: 500px;
+      border: none;
+      display: block
+    }
+
+    .preview-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      gap: 12px;
+      color: var(--text-placeholder)
+    }
+
+    .preview-empty i {
+      font-size: 48px;
+      opacity: 0.4
+    }
+
+    .preview-empty p {
+      font-size: 14px;
+      font-weight: 500
+    }
+
+    .build-hero {
+      text-align: center;
+      padding: 32px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      margin-bottom: 16px
+    }
+
+    .build-hero-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--accent-surface);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 28px;
+      color: var(--accent)
+    }
+
+    .build-hero h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: -0.3px
+    }
+
+    .build-hero p {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      max-width: 360px;
+      margin: 0 auto
+    }
+
+    .build-stepper {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 16px;
+      display: none
+    }
+
+    .build-stepper.visible {
+      display: block;
+      animation: panelIn .3s ease
+    }
+
+    .step-item {
+      display: flex;
+      gap: 16px;
+      padding: 14px 0;
+      position: relative
+    }
+
+    .step-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 44px;
+      bottom: 0;
+      width: 2px;
+      background: var(--border-color)
+    }
+
+    .step-item.completed:not(:last-child)::after {
+      background: var(--success)
+    }
+
+    .step-item.active:not(:last-child)::after {
+      background: linear-gradient(to bottom, var(--accent) 50%, var(--border-color) 50%)
+    }
+
+    .step-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--bg-input);
+      color: var(--text-tertiary);
+      border: 2px solid var(--border-color);
+      transition: all var(--transition-med);
+      z-index: 1
+    }
+
+    .step-item.active .step-dot {
+      background: var(--accent-surface);
+      color: var(--accent);
+      border-color: var(--accent);
+      animation: pulse-ring 1.5s ease infinite
+    }
+
+    html.dark .step-item.active .step-dot {
+      animation-name: pulse-ring-dark
+    }
+
+    @keyframes pulse-ring {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(74, 103, 65, 0.3)
+      }
+
+      50% {
+        box-shadow: 0 0 0 6px rgba(74, 103, 65, 0)
+      }
+    }
+
+    @keyframes pulse-ring-dark {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(163, 196, 152, 0.3)
+      }
+
+      50% {
+        box-shadow: 0 0 0 6px rgba(163, 196, 152, 0)
+      }
+    }
+
+    .step-item.completed .step-dot {
+      background: var(--success);
+      color: #fff;
+      border-color: var(--success)
+    }
+
+    .step-item.error .step-dot {
+      background: var(--danger);
+      color: #fff;
+      border-color: var(--danger)
+    }
+
+    .step-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .step-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary)
+    }
+
+    .step-item.active .step-label {
+      color: var(--accent)
+    }
+
+    .step-item.completed .step-label {
+      color: var(--success)
+    }
+
+    .step-item.error .step-label {
+      color: var(--danger)
+    }
+
+    .step-sublabel {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 2px
+    }
+
+    .build-logs {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 16px;
+      display: none
+    }
+
+    .build-logs.visible {
+      display: block;
+      animation: panelIn .3s ease
+    }
+
+    .logs-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .logs-header span {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px
+    }
+
+    .logs-body {
+      background: var(--bg-primary);
+      padding: 16px;
+      max-height: 260px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.8;
+      color: var(--text-secondary)
+    }
+
+    .logs-body::-webkit-scrollbar {
+      width: 6px
+    }
+
+    .logs-body::-webkit-scrollbar-track {
+      background: transparent
+    }
+
+    .logs-body::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 3px
+    }
+
+    .log-line {
+      display: flex;
+      gap: 10px
+    }
+
+    .log-time {
+      color: var(--text-placeholder);
+      flex-shrink: 0
+    }
+
+    .log-msg {
+      word-break: break-word
+    }
+
+    .log-line.error .log-msg {
+      color: var(--danger)
+    }
+
+    .log-line.success .log-msg {
+      color: var(--success)
+    }
+
+    .log-line.info .log-msg {
+      color: var(--info)
+    }
+
+    .download-card {
+      background: var(--success-surface);
+      border: 1.5px solid var(--success);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      text-align: center;
+      display: none
+    }
+
+    .download-card.visible {
+      display: block;
+      animation: panelIn .3s ease
+    }
+
+    .download-card i {
+      font-size: 48px;
+      color: var(--success);
+      margin-bottom: 12px
+    }
+
+    .download-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px
+    }
+
+    .download-card p {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-bottom: 16px
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-color)
+    }
+
+    .setting-row:last-child {
+      border-bottom: none
+    }
+
+    .setting-info {
+      flex: 1;
+      min-width: 0;
+      padding-right: 16px
+    }
+
+    .setting-info .name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary)
+    }
+
+    .setting-info .desc {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 2px
+    }
+
+    .toggle {
+      width: 48px;
+      height: 28px;
+      background: var(--border-color);
+      border-radius: 14px;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: background var(--transition-fast);
+      border: none
+    }
+
+    .toggle.on {
+      background: var(--accent)
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 22px;
+      height: 22px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform var(--transition-fast);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2)
+    }
+
+    .toggle.on::after {
+      transform: translateX(20px)
+    }
+
+    .danger-section {
+      border: 1.5px solid var(--danger);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-top: 16px
+    }
+
+    .danger-section .section-title {
+      color: var(--danger)
+    }
+
+    .danger-section .section-title i {
+      color: var(--danger)
+    }
+
+    .danger-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px
+    }
+
+    .snackbar-container {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      pointer-events: none;
+      width: calc(100% - 32px);
+      max-width: 420px
+    }
+
+    .snackbar {
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: var(--shadow-lg);
+      animation: snackIn .3s ease;
+      pointer-events: auto;
+      width: 100%
+    }
+
+    .snackbar.hide {
+      animation: snackOut .25s ease forwards
+    }
+
+    .snackbar.success {
+      background: #2e7d32
+    }
+
+    .snackbar.error {
+      background: #b3261e
+    }
+
+    .snackbar.warning {
+      background: #e8a317;
+      color: #1a1c18
+    }
+
+    .snackbar.info {
+      background: #1565c0
+    }
+
+    .snackbar i {
+      font-size: 16px;
+      flex-shrink: 0
+    }
+
+    .snackbar .msg {
+      flex: 1
+    }
+
+    @keyframes snackIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes snackOut {
+      to {
+        opacity: 0;
+        transform: translateY(16px)
+      }
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-med)
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto
+    }
+
+    .modal-box {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: var(--shadow-xl);
+      transform: scale(0.92);
+      transition: transform var(--transition-med)
+    }
+
+    .modal-overlay.open .modal-box {
+      transform: scale(1)
+    }
+
+    .modal-box h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px
+    }
+
+    .modal-box p {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-bottom: 20px;
+      line-height: 1.6
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-input) 25%, var(--bg-input-focus) 50%, var(--bg-input) 75%);
+      background-size: 200% 100%;
+      animation: shimme 1.5s ease infinite;
+      border-radius: var(--radius-sm)
+    }
+
+    @keyframes shimme {
+      0% {
+        background-position: 200% 0
+      }
+
+      100% {
+        background-position: -200% 0
+      }
+    }
+
+    .input-wrap {
+      position: relative
+    }
+
+    .input-wrap .form-input {
+      padding-right: 44px
+    }
+
+    .input-toggle {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      font-size: 16px;
+      padding: 6px;
+      border-radius: 50%;
+      transition: color var(--transition-fast)
+    }
+
+    .input-toggle:hover {
+      color: var(--text-secondary)
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--text-tertiary);
+      font-size: 12px;
+      border-top: 1px solid var(--border-color);
+      margin-top: auto;
+      background: var(--bg-card)
+    }
+
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin: 0 8px;
+      transition: color var(--transition-fast)
+    }
+
+    footer a:hover {
+      color: var(--accent)
+    }
+
+    @media(max-width:640px) {
+      .form-row {
+        grid-template-columns: 1fr
+      }
+
+      .tab-btn .tab-label {
+        display: none
+      }
+
+      .tab-btn {
+        padding: 12px 8px
+      }
+
+      .tab-btn i {
+        font-size: 18px
+      }
+
+      .main-content {
+        padding: 14px
+      }
+
+      .section-card {
+        padding: 18px
+      }
+
+      .build-hero {
+        padding: 24px 16px
+      }
+    }
+
+    input[type="file"] {
+      display: none
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="app-logo"><i class="fa-solid fa-hammer"></i></div>
+        <div class="header-text">
+          <h1>APK Builder</h1>
+          <p data-i18n="header.subtitle">HTML to Android APK Builder (FULL DECODE)</p>
+        </div>
+      </div>
+    </header>
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" data-tab="editor" role="tab" aria-selected="true"><i class="fa-solid fa-code"></i><span class="tab-label" data-i18n="tab.editor">Editor</span></button>
+      <button class="tab-btn" data-tab="preview" role="tab" aria-selected="false"><i class="fa-solid fa-eye"></i><span class="tab-label" data-i18n="tab.preview">Preview</span></button>
+      <button class="tab-btn" data-tab="build" role="tab" aria-selected="false"><i class="fa-solid fa-rocket"></i><span class="tab-label" data-i18n="tab.build">Build</span></button>
+      <button class="tab-btn" data-tab="settings" role="tab" aria-selected="false"><i class="fa-solid fa-gear"></i><span class="tab-label" data-i18n="tab.settings">Settings</span></button>
+    </nav>
+    <main class="main-content">
+      <!-- PANEL EDITOR -->
+      <div class="tab-panel active" id="panel-editor" role="tabpanel">
+        <div class="section-card">
+          <div class="section-title"><i class="fa-solid fa-mobile-screen"></i> <span data-i18n="editor.app_config">App Configuration</span></div>
+          <p class="section-desc" data-i18n="editor.app_config_desc">Define your Android application identity and version.</p>
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="editor.apk_name">APK Name</span> <span class="required">*</span></label>
+            <input class="form-input" id="apkName" placeholder="My Awesome App" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="editor.package_name">Package Name</span> <span class="required">*</span></label>
+            <input class="form-input mono" id="packageName" placeholder="com.example.myapp" autocomplete="off">
+            <p class="form-hint" data-i18n="editor.package_hint">Unique identifier using reverse domain notation (e.g. com.yourname.appname)</p>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" data-i18n="editor.version_name">Version Name</label>
+              <input class="form-input" id="versionName" placeholder="1.0.0" value="1.0.0" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="editor.version_code">Version Code</label>
+              <input class="form-input" id="versionCode" placeholder="1" value="1" type="number" min="1" autocomplete="off">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="editor.app_icon">App Icon</label>
+            <div class="icon-upload-zone" id="iconUploadZone">
+              <div class="icon-preview" id="iconPreview"><i class="fa-solid fa-image"></i></div>
+              <div class="icon-text">
+                <div class="title" data-i18n="editor.upload_icon">Upload Icon</div>
+                <div class="hint" data-i18n="editor.icon_hint">PNG recommended, 512x512px</div>
+              </div>
+            </div>
+            <input type="file" id="iconFileInput" accept="image/png,image/jpeg,image/webp">
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="section-title"><i class="fa-brands fa-github"></i> <span data-i18n="editor.github_title">GitHub Integration</span></div>
+          <p class="section-desc" data-i18n="editor.github_desc">Connect your GitHub account to create repos and trigger CI/CD builds.</p>
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="editor.gh_username">GitHub Username</span> <span class="required">*</span></label>
+            <input class="form-input" id="ghUsername" placeholder="octocat" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="editor.gh_token">Personal Access Token</span> <span class="required">*</span></label>
+            <div class="input-wrap">
+              <input class="form-input mono" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxxx" autocomplete="off">
+              <button class="input-toggle" id="tokenToggle" type="button" aria-label="Toggle token visibility"><i class="fa-solid fa-eye"></i></button>
+            </div>
+            <p class="form-hint" data-i18n="editor.gh_token_hint">Required scopes: repo, workflow. Token is stored in-memory only.</p>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label"><span data-i18n="editor.repo_name">Repository Name</span> <span class="required">*</span></label>
+              <input class="form-input mono" id="repoName" placeholder="my-android-app" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="editor.visibility">Visibility</label>
+              <select class="form-select" id="repoVisibility">
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="section-title"><i class="fa-solid fa-file-code"></i> <span data-i18n="editor.html_title">HTML Source File</span></div>
+          <p class="section-desc" data-i18n="editor.html_desc">Upload your HTML file. Ensure all CSS and JavaScript is inlined using &lt;style&gt; and &lt;script&gt; tags within the single HTML file.</p>
+          <div class="upload-zone" id="htmlUploadZone">
+            <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <div class="upload-text" data-i18n="editor.html_drop">Drag & drop your HTML file here</div>
+            <div class="upload-hint" data-i18n="editor.html_browse">or click to browse — accepts .html files only</div>
+            <div class="upload-file-info" id="htmlFileInfo" style="display:none">
+              <i class="fa-solid fa-file-code"></i>
+              <span class="file-name" id="htmlFileName"></span>
+              <span class="file-size" id="htmlFileSize"></span>
+              <button class="upload-remove" id="htmlRemoveBtn" type="button"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+          </div>
+          <input type="file" id="htmlFileInput" accept=".html,.htm">
+        </div>
+      </div>
+      <!-- PANEL PREVIEW -->
+      <div class="tab-panel" id="panel-preview" role="tabpanel">
+        <div class="section-card" style="padding:0;overflow:hidden">
+          <div class="preview-toolbar">
+            <button class="btn btn-ghost btn-sm" id="previewReload" title="Reload preview"><i class="fa-solid fa-rotate-right"></i></button>
+            <div class="preview-url" id="previewUrl" data-i18n="preview.no_file">No file loaded</div>
+          </div>
+          <div class="preview-frame-wrap" id="previewWrap">
+            <div class="preview-empty" id="previewEmpty">
+              <i class="fa-solid fa-browser"></i>
+              <p data-i18n="preview.empty">Upload an HTML file to see a live preview</p>
+            </div>
+            <iframe class="preview-frame" id="previewFrame" style="display:none" sandbox="allow-scripts allow-same-origin"></iframe>
+          </div>
+        </div>
+      </div>
+      <!-- PANEL BUILD -->
+      <div class="tab-panel" id="panel-build" role="tabpanel">
+        <div class="build-hero" id="buildHero">
+          <div class="build-hero-icon"><i class="fa-solid fa-rocket"></i></div>
+          <h2 data-i18n="build.ready_title">Ready to Build</h2>
+          <p data-i18n="build.ready_desc">Fill in all required fields in the Editor tab, then start the build process to generate your APK.</p>
+          <button class="btn btn-primary btn-full" id="buildStartBtn" style="margin-top:20px;max-width:280px"><span class="btn-text"><i class="fa-solid fa-play"></i> <span data-i18n="build.start">Start Build</span></span><span class="spinner"></span></button>
+        </div>
+        <div class="build-stepper" id="buildStepper">
+          <div class="step-item" data-step="0">
+            <div class="step-dot">1</div>
+            <div class="step-info">
+              <div class="step-label" data-i18n="build.step1_label">Create Repository</div>
+              <div class="step-sublabel" data-i18n="build.step1_sub">Initialize new GitHub repository</div>
+            </div>
+          </div>
+          <div class="step-item" data-step="1">
+            <div class="step-dot">2</div>
+            <div class="step-info">
+              <div class="step-label" data-i18n="build.step2_label">Upload Files</div>
+              <div class="step-sublabel" data-i18n="build.step2_sub">Push source code, configs, and workflow</div>
+            </div>
+          </div>
+          <div class="step-item" data-step="2">
+            <div class="step-dot">3</div>
+            <div class="step-info">
+              <div class="step-label" data-i18n="build.step3_label">Trigger GitHub Actions</div>
+              <div class="step-sublabel" data-i18n="build.step3_sub">Start CI/CD pipeline</div>
+            </div>
+          </div>
+          <div class="step-item" data-step="3">
+            <div class="step-dot">4</div>
+            <div class="step-info">
+              <div class="step-label" data-i18n="build.step4_label">Building APK</div>
+              <div class="step-sublabel" data-i18n="build.step4_sub">Compile Android package with Cordova</div>
+            </div>
+          </div>
+          <div class="step-item" data-step="4">
+            <div class="step-dot">5</div>
+            <div class="step-info">
+              <div class="step-label" data-i18n="build.step5_label">Complete</div>
+              <div class="step-sublabel" data-i18n="build.step5_sub">APK artifact ready for download</div>
+            </div>
+          </div>
+        </div>
+        <div class="build-logs" id="buildLogs">
+          <div class="logs-header"><span><i class="fa-solid fa-terminal"></i> <span data-i18n="build.logs">Build Logs</span></span><button class="btn btn-ghost btn-sm" id="clearLogsBtn"><i class="fa-solid fa-trash-can"></i></button></div>
+          <div class="logs-body" id="logsBody"></div>
+        </div>
+        <div class="download-card" id="downloadCard">
+          <i class="fa-solid fa-circle-check"></i>
+          <h3 data-i18n="build.success_title">Build Successful!</h3>
+          <p data-i18n="build.success_desc">Your APK has been built and is available as a GitHub Actions artifact.</p>
+          <a class="btn btn-primary" id="downloadLink" href="#" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-download"></i> <span data-i18n="build.download">Download APK Artifact</span></a>
+        </div>
+      </div>
+      <!-- PANEL SETTINGS -->
+      <div class="tab-panel" id="panel-settings" role="tabpanel">
+        <div class="section-card">
+          <div class="section-title"><i class="fa-solid fa-sliders"></i> <span data-i18n="settings.pref_title">Preferences</span></div>
+          <p class="section-desc" data-i18n="settings.pref_desc">Customize the app behavior to your liking.</p>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="name" data-i18n="settings.autosave">Auto-save</div>
+              <div class="desc" data-i18n="settings.autosave_desc">Persist form data automatically across sessions</div>
+            </div>
+            <button class="toggle on" id="toggleAutosave" type="button" role="switch" aria-checked="true"></button>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="name" data-i18n="settings.autorefresh">Auto-refresh Preview</div>
+              <div class="desc" data-i18n="settings.autorefresh_desc">Update preview automatically when file changes</div>
+            </div>
+            <button class="toggle on" id="toggleAutorefresh" type="button" role="switch" aria-checked="true"></button>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="section-title"><i class="fa-solid fa-circle-info"></i> <span data-i18n="settings.about_title">About</span></div>
+          <p class="section-desc" data-i18n="settings.about_desc">APK Builder converts your single-file HTML applications into native Android APKs using Apache Cordova and GitHub Actions CI/CD pipeline. No local setup needed.</p>
+          <div style="font-size:12px;color:var(--text-tertiary)">
+            <p><strong data-i18n="settings.how_it_works">How it works:</strong></p>
+            <ol style="padding-left:18px;margin-top:6px;line-height:2">
+              <li data-i18n="settings.step1">Upload your self-contained HTML file</li>
+              <li data-i18n="settings.step2">Configure APK metadata and GitHub credentials</li>
+              <li data-i18n="settings.step3">APK Builder creates a Cordova project on GitHub</li>
+              <li data-i18n="settings.step4">GitHub Actions builds the debug APK</li>
+              <li data-i18n="settings.step5">Download the artifact from the workflow run</li>
+            </ol>
+          </div>
+        </div>
+        <div class="section-card danger-section">
+          <div class="section-title"><i class="fa-solid fa-triangle-exclamation"></i> <span data-i18n="settings.danger_title">Danger Zone</span></div>
+          <p class="section-desc" data-i18n="settings.danger_desc">Irreversible actions. Proceed with caution.</p>
+          <div class="danger-actions">
+            <button class="btn btn-outline btn-sm" id="btnClearData"><i class="fa-solid fa-eraser"></i> Clear Saved Data</button>
+            <button class="btn btn-danger btn-sm" id="btnResetForm"><i class="fa-solid fa-rotate-left"></i> Reset Form</button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <p data-i18n="footer.copyright">&copy; 2026 APK Builder. All rights reserved. (FULL DECODE)</p>
+      <div style="margin-top:8px">
+        <a href="../privacy.html" target="_blank" data-i18n="footer.privacy">Privacy Policy</a>
+        <a href="../terms.html" target="_blank" data-i18n="footer.terms">Terms & Conditions</a>
+      </div>
+    </footer>
+  </div>
+  <div class="snackbar-container" id="snackbarContainer"></div>
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <h3 id="modalTitle">Confirm Action</h3>
+      <p id="modalMessage">Are you sure you want to proceed?</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="modalCancel">Cancel</button>
+        <button class="btn btn-danger" id="modalConfirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function() {
+      "use strict";
+      if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.classList.add("dark");
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(event) {
+        if (event.matches) document.documentElement.classList.add("dark");
+        else document.documentElement.classList.remove("dark");
+      });
+
+      let Storage = (function() {
+        let memStore = {};
+
+        function _tryLocal(method, key, value) {
+          if (method === "get") return memStore[key] || null;
+          if (method === "set") memStore[key] = value;
+          if (method === "remove") delete memStore[key];
+          if (method === "clear") memStore = {};
+        }
+        return {
+          get: function(k) { return _tryLocal("get", k); },
+          set: function(k, v) { _tryLocal("set", k, String(v)); },
+          remove: function(k) { _tryLocal("remove", k); },
+          clear: function() { _tryLocal("clear"); },
+          getJSON: function(k) {
+            let raw = _tryLocal("get", k);
+            if (!raw) return null;
+            try { return JSON.parse(raw); } catch (_e) { return null; }
+          },
+          setJSON: function(k, v) { _tryLocal("set", k, JSON.stringify(v)); }
+        };
+      })();
+
+      let UI = (function() {
+        let snackbarContainer = document.getElementById("snackbarContainer");
+
+        function showSnackbar(message, type) {
+          type = type || "info";
+          let icons = { success: "fa-circle-check", error: "fa-circle-xmark", warning: "fa-triangle-exclamation", info: "fa-circle-info" };
+          let el = document.createElement("div");
+          el.className = "snackbar " + type;
+          el.innerHTML = '<i class="fa-solid ' + (icons[type] || icons.info) + '"></i><span class="msg">' + _escapeHtml(message) + '</span>';
+          snackbarContainer.appendChild(el);
+          setTimeout(function() {
+            el.classList.add("hide");
+            setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 300);
+          }, 3500);
+        }
+
+        let modalOverlay = document.getElementById("modalOverlay");
+        let modalTitle = document.getElementById("modalTitle");
+        let modalMessage = document.getElementById("modalMessage");
+        let modalConfirmBtn = document.getElementById("modalConfirm");
+        let modalCancelBtn = document.getElementById("modalCancel");
+        let _modalResolve = null;
+
+        function showConfirm(title, message, confirmText) {
+          modalTitle.textContent = title;
+          modalMessage.textContent = message;
+          modalConfirmBtn.textContent = confirmText || "Confirm";
+          modalOverlay.classList.add("open");
+          return new Promise(function(resolve) {
+            _modalResolve = resolve;
+          });
+        }
+
+        modalConfirmBtn.addEventListener("click", function() {
+          modalOverlay.classList.remove("open");
+          if (_modalResolve) { _modalResolve(true); _modalResolve = null; }
+        });
+        modalCancelBtn.addEventListener("click", function() {
+          modalOverlay.classList.remove("open");
+          if (_modalResolve) { _modalResolve(false); _modalResolve = null; }
+        });
+        modalOverlay.addEventListener("click", function(e) {
+          if (e.target === modalOverlay) {
+            modalOverlay.classList.remove("open");
+            if (_modalResolve) { _modalResolve(false); _modalResolve = null; }
+          }
+        });
+
+        function _escapeHtml(text) {
+          let div = document.createElement("div");
+          div.appendChild(document.createTextNode(text));
+          return div.innerHTML;
+        }
+        return { showSnackbar, showConfirm, escapeHtml: _escapeHtml };
+      })();
+
+      let tabBtns = document.querySelectorAll(".tab-btn");
+      let tabPanels = document.querySelectorAll(".tab-panel");
+      tabBtns.forEach(btn => {
+        btn.addEventListener("click", function() {
+          let tab = btn.getAttribute("data-tab");
+          tabBtns.forEach(b => { b.classList.remove("active"); b.setAttribute("aria-selected", "false"); });
+          tabPanels.forEach(p => p.classList.remove("active"));
+          btn.classList.add("active");
+          btn.setAttribute("aria-selected", "true");
+          let panel = document.getElementById("panel-" + tab);
+          if (panel) panel.classList.add("active");
+          if (tab === "preview" && appState.htmlContent) refreshPreview();
+        });
+      });
+
+      let appState = {
+        htmlFile: null,
+        htmlContent: null,
+        htmlFileName: null,
+        iconFile: null,
+        iconDataUrl: null,
+        settings: { autoSave: true, autoRefresh: true },
+        building: false
+      };
+
+      let fields = {
+        apkName: document.getElementById("apkName"),
+        packageName: document.getElementById("packageName"),
+        versionName: document.getElementById("versionName"),
+        versionCode: document.getElementById("versionCode"),
+        ghUsername: document.getElementById("ghUsername"),
+        ghToken: document.getElementById("ghToken"),
+        repoName: document.getElementById("repoName"),
+        repoVisibility: document.getElementById("repoVisibility")
+      };
+
+      function saveFormData() {
+        if (!appState.settings.autoSave) return;
+        let data = {};
+        Object.keys(fields).forEach(key => {
+          if (key !== "ghToken") data[key] = fields[key].value;
+        });
+        Storage.setJSON("apkforge_form", data);
+      }
+
+      function loadFormData() {
+        let data = Storage.getJSON("apkforge_form");
+        if (!data) return;
+        Object.keys(data).forEach(key => {
+          if (fields[key] && key !== "ghToken") fields[key].value = data[key];
+        });
+      }
+
+      function loadSettings() {
+        let s = Storage.getJSON("apkforge_settings");
+        if (s) {
+          appState.settings.autoSave = s.autoSave !== false;
+          appState.settings.autoRefresh = s.autoRefresh !== false;
+        }
+        updateToggle("toggleAutosave", appState.settings.autoSave);
+        updateToggle("toggleAutorefresh", appState.settings.autoRefresh);
+      }
+
+      function saveSettings() {
+        Storage.setJSON("apkforge_settings", appState.settings);
+      }
+
+      function updateToggle(id, on) {
+        let el = document.getElementById(id);
+        if (!el) return;
+        if (on) { el.classList.add("on"); el.setAttribute("aria-checked", "true"); }
+        else { el.classList.remove("on"); el.setAttribute("aria-checked", "false"); }
+      }
+
+      let _saveTimer = null;
+      Object.keys(fields).forEach(key => {
+        fields[key].addEventListener("input", function() {
+          clearTimeout(_saveTimer);
+          _saveTimer = setTimeout(saveFormData, 500);
+        });
+      });
+
+      let tokenToggle = document.getElementById("tokenToggle");
+      tokenToggle.addEventListener("click", function() {
+        let input = fields.ghToken;
+        let icon = tokenToggle.querySelector("i");
+        if (input.type === "password") {
+          input.type = "text";
+          icon.className = "fa-solid fa-eye-slash";
+        } else {
+          input.type = "password";
+          icon.className = "fa-solid fa-eye";
+        }
+      });
+
+      let iconUploadZone = document.getElementById("iconUploadZone");
+      let iconFileInput = document.getElementById("iconFileInput");
+      let iconPreview = document.getElementById("iconPreview");
+
+      iconUploadZone.addEventListener("click", function() { iconFileInput.click(); });
+      iconUploadZone.addEventListener("dragover", function(e) { e.preventDefault(); iconUploadZone.classList.add("dragover"); });
+      iconUploadZone.addEventListener("dragleave", function() { iconUploadZone.classList.remove("dragover"); });
+      iconUploadZone.addEventListener("drop", function(e) {
+        e.preventDefault();
+        iconUploadZone.classList.remove("dragover");
+        if (e.dataTransfer.files.length > 0) handleIconFile(e.dataTransfer.files[0]);
+      });
+      iconFileInput.addEventListener("change", function() {
+        if (iconFileInput.files.length > 0) handleIconFile(iconFileInput.files[0]);
+      });
+
+      function handleIconFile(file) {
+        if (!file.type.startsWith("image/")) {
+          UI.showSnackbar("Please select an image file", "error");
+          return;
+        }
+        appState.iconFile = file;
+        let reader = new FileReader();
+        reader.onload = function(e) {
+          appState.iconDataUrl = e.target.result;
+          iconPreview.innerHTML = '<img src="' + e.target.result + '" alt="App Icon">';
+          iconUploadZone.classList.add("has-icon");
+          iconUploadZone.querySelector(".title").textContent = file.name;
+          iconUploadZone.querySelector(".hint").textContent = _formatBytes(file.size);
+        };
+        reader.readAsDataURL(file);
+      }
+
+      let htmlUploadZone = document.getElementById("htmlUploadZone");
+      let htmlFileInput = document.getElementById("htmlFileInput");
+      let htmlFileInfo = document.getElementById("htmlFileInfo");
+      let htmlFileName = document.getElementById("htmlFileName");
+      let htmlFileSize = document.getElementById("htmlFileSize");
+      let htmlRemoveBtn = document.getElementById("htmlRemoveBtn");
+
+      htmlUploadZone.addEventListener("click", function(e) {
+        if (e.target.closest(".upload-remove")) return;
+        htmlFileInput.click();
+      });
+      htmlUploadZone.addEventListener("dragover", function(e) { e.preventDefault(); htmlUploadZone.classList.add("dragover"); });
+      htmlUploadZone.addEventListener("dragleave", function() { htmlUploadZone.classList.remove("dragover"); });
+      htmlUploadZone.addEventListener("drop", function(e) {
+        e.preventDefault();
+        htmlUploadZone.classList.remove("dragover");
+        if (e.dataTransfer.files.length > 0) handleHtmlFile(e.dataTransfer.files[0]);
+      });
+      htmlFileInput.addEventListener("change", function() {
+        if (htmlFileInput.files.length > 0) handleHtmlFile(htmlFileInput.files[0]);
+      });
+      htmlRemoveBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        clearHtmlFile();
+      });
+
+      function handleHtmlFile(file) {
+        let ext = file.name.split(".").pop().toLowerCase();
+        if (ext !== "html" && ext !== "htm") {
+          UI.showSnackbar("Only .html files are accepted", "error");
+          return;
+        }
+        appState.htmlFile = file;
+        appState.htmlFileName = file.name;
+        let reader = new FileReader();
+        reader.onload = function(e) {
+          appState.htmlContent = e.target.result;
+          htmlFileName.textContent = file.name;
+          htmlFileSize.textContent = _formatBytes(file.size);
+          htmlFileInfo.style.display = "flex";
+          htmlUploadZone.classList.add("has-file");
+          UI.showSnackbar("HTML file loaded successfully", "success");
+          if (appState.settings.autoRefresh) refreshPreview();
+        };
+        reader.readAsText(file);
+      }
+
+      function clearHtmlFile() {
+        appState.htmlFile = null;
+        appState.htmlContent = null;
+        appState.htmlFileName = null;
+        htmlFileInfo.style.display = "none";
+        htmlUploadZone.classList.remove("has-file");
+        htmlFileInput.value = "";
+        let frame = document.getElementById("previewFrame");
+        frame.style.display = "none";
+        document.getElementById("previewEmpty").style.display = "flex";
+        document.getElementById("previewUrl").textContent = "No file loaded";
+      }
+
+      function refreshPreview() {
+        let frame = document.getElementById("previewFrame");
+        let empty = document.getElementById("previewEmpty");
+        let urlBar = document.getElementById("previewUrl");
+        if (!appState.htmlContent) {
+          frame.style.display = "none";
+          empty.style.display = "flex";
+          urlBar.textContent = "No file loaded";
+          return;
+        }
+        empty.style.display = "none";
+        frame.style.display = "block";
+        urlBar.textContent = appState.htmlFileName || "preview.html";
+        let blob = new Blob([appState.htmlContent], { type: "text/html" });
+        let url = URL.createObjectURL(blob);
+        frame.src = url;
+      }
+
+      document.getElementById("previewReload").addEventListener("click", function() {
+        refreshPreview();
+        UI.showSnackbar("Preview reloaded", "info");
+      });
+
+      document.getElementById("toggleAutosave").addEventListener("click", function() {
+        appState.settings.autoSave = !appState.settings.autoSave;
+        updateToggle("toggleAutosave", appState.settings.autoSave);
+        saveSettings();
+        UI.showSnackbar("Auto-save " + (appState.settings.autoSave ? "enabled" : "disabled"), "info");
+      });
+      document.getElementById("toggleAutorefresh").addEventListener("click", function() {
+        appState.settings.autoRefresh = !appState.settings.autoRefresh;
+        updateToggle("toggleAutorefresh", appState.settings.autoRefresh);
+        saveSettings();
+        UI.showSnackbar("Auto-refresh " + (appState.settings.autoRefresh ? "enabled" : "disabled"), "info");
+      });
+
+      document.getElementById("btnClearData").addEventListener("click", async function() {
+        let yes = await UI.showConfirm("Clear Saved Data", "This will remove all saved form data and preferences. Your current session data will remain.", "Clear Data");
+        if (yes) {
+          Storage.clear();
+          UI.showSnackbar("Saved data cleared", "success");
+        }
+      });
+      document.getElementById("btnResetForm").addEventListener("click", async function() {
+        let yes = await UI.showConfirm("Reset Form", "This will clear all form fields, uploaded files, and reset to defaults. This cannot be undone.", "Reset");
+        if (yes) {
+          Object.keys(fields).forEach(key => {
+            if (key === "versionName") fields[key].value = "1.0.0";
+            else if (key === "versionCode") fields[key].value = "1";
+            else if (key === "repoVisibility") fields[key].value = "public";
+            else fields[key].value = "";
+          });
+          clearHtmlFile();
+          appState.iconFile = null;
+          appState.iconDataUrl = null;
+          iconPreview.innerHTML = '<i class="fa-solid fa-image"></i>';
+          iconUploadZone.classList.remove("has-icon");
+          iconUploadZone.querySelector(".title").textContent = "Upload Icon";
+          iconUploadZone.querySelector(".hint").textContent = "PNG recommended, 512x512px";
+          Storage.clear();
+          UI.showSnackbar("Form has been reset", "success");
+        }
+      });
+      document.getElementById("clearLogsBtn").addEventListener("click", function() {
+        document.getElementById("logsBody").innerHTML = "";
+      });
+
+      function _formatBytes(bytes) {
+        if (bytes === 0) return "0 B";
+        let k = 1024;
+        let sizes = ["B", "KB", "MB", "GB"];
+        let i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+      }
+
+      function _sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      loadSettings();
+      loadFormData();
+    })();
+  </script>
+  <!-- No external ang.js; all internal code is included above -->
+</body>
+</html>
